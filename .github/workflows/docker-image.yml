@@ -29,14 +29,14 @@ jobs:
         uses: actions/cache@v4
         with:
           path: /tmp/.buildx-cache
-          key: ${{ runner.os }}-buildx-${{ github.sha }}
+          key: ${{ runner.os }}-buildx-${{ github.run_number  }}
           restore-keys: |
             ${{ runner.os }}-buildx-
 
       - name: Build Docker image
         run: |
-          docker build -t dipakyadav/azure-blob-explorer:${{ github.sha }} .
+          docker build -t dipakyadav/azure-blob-explorer:${{ github.run_number }} .
         
       - name: Push Docker image
         run: |
-          docker push dipakyadav/azure-blob-explorer:${{ github.sha }}
+          docker push dipakyadav/azure-blob-explorer:${{ github.run_number }}
