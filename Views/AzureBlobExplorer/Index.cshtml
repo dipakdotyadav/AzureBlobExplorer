@@ -1,0 +1,13 @@
+
+@{
+    ViewData["Title"] = "Connect to Azure Blob Storage";
+}
+
+<h2>Connect</h2>
+<form method="post" asp-action="Connect">
+    <div class="mb-3">
+        <label>Connection String</label>
+        <input type="text" name="connectionString" class="form-control" required />
+    </div>
+    <button type="submit" class="btn btn-primary">Connect</button>
+</form>

@@ -1,0 +1,86 @@
+@model List<(string Name, bool IsDirectory, long Size, DateTimeOffset? CreatedOn, DateTimeOffset? LastModified)>
+@{
+    var container = ViewBag.ContainerName as string;
+    var prefix = ViewBag.Prefix as string;
+}
+
+<h2>Browsing: @container / @prefix</h2>
+
+@if (!string.IsNullOrEmpty(prefix))
+{
+    <a asp-action="BrowseContainer" asp-route-containerName="@container" asp-route-prefix="@prefix.Substring(0, prefix.LastIndexOf('/', prefix.Length - 2) + 1)">⬅ Back</a>
+}
+
+@* // for directories *@
+@* <ul class="list-group list-group-horizontal-sm">
+    @foreach (var item in Model)
+    {
+        if (item.IsDirectory)
+        {
+            <li class="list-group-item">
+                📁 <a asp-action="BrowseContainer" asp-route-containerName="@container" asp-route-prefix="@item.Name">@item.Name</a>
+            </li>
+        }    }
+</ul> *@
+<div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
+    @foreach (var item in Model.Where(i => i.IsDirectory))
+    {
+        <div class="col">
+            <div class="card shadow-sm h-100">
+                <div class="card-body text-center">
+                    <i class="bi bi-folder-fill" style="font-size: 2rem; color: #ffc107;"></i>
+                    <h5 class="card-title mt-2">@System.IO.Path.GetFileName(item.Name.TrimEnd('/'))</h5>
+                    <a class="stretched-link"
+                       asp-action="BrowseContainer"
+                       asp-route-containerName="@container"
+                       asp-route-prefix="@item.Name"></a>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+<hr />
+
+@* // for files *@
+@* <ul class="list-group">
+    @foreach (var item in Model)
+    {
+        if (!item.IsDirectory)
+        {
+            <li class="list-group-item">
+                📄 @item.Name
+                <a asp-action="DownloadBlob" asp-route-container="@container" asp-route-blob="@item.Name">Download</a> |
+                <a asp-action="DeleteBlob" asp-route-container="@container" asp-route-blob="@item.Name">Delete</a>
+                <a >@Utils.ToReadableSize(item.Size)</a>
+            </li>
+        }
+    }
+</ul> *@
+<h4>Files</h4>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Size</th>
+            @* <th>Created</th> *@
+            <th>Modified(Local Time)</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+    @foreach (var item in Model.Where(i => !i.IsDirectory))
+    {
+        <tr>
+            <td>📄 @item.Name</td>
+            <td>@Utils.ToReadableSize(item.Size)</td>
+            @* <td>@(item.CreatedOn?.ToString("g") ?? "-")</td> *@
+            <td>@Utils.ToReadableDate(item.LastModified)</td>
+            <td>
+                <a asp-action="DownloadBlob" asp-route-container="@container" asp-route-blob="@item.Name">Download</a> |
+                @* <a asp-action="DeleteBlob" asp-route-container="@container" asp-route-blob="@item.Name">Delete</a> *@
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>

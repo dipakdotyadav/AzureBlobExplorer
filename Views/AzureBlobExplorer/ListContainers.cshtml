@@ -1,0 +1,38 @@
+@model List<Azure.Storage.Blobs.Models.BlobContainerItem>
+
+<h3>Upload New Blob</h3>
+<form method="post" enctype="multipart/form-data" asp-action="UploadBlob">
+    <div class="mb-3">
+        <label>Select container:</label>
+        <input type="text" name="container" class="form-control" required />
+    </div>
+    <div class="mb-3">
+        <input type="file" name="file" class="form-control" />
+    </div>
+    <button type="submit" class="btn btn-success">Upload</button>
+</form>
+
+<h2>Containers</h2>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Last Modified(Local Time)</th>
+            <th>Access Level</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var container in Model)
+        {
+            <tr>
+                <td>@container.Name</td>
+                <td>@Utils.ToReadableDate(container.Properties.LastModified.ToLocalTime())</td>
+                <td>@container.Properties.PublicAccess</td>
+                <td>
+                    <a asp-action="BrowseContainer" asp-route-containerName="@container.Name">Open</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

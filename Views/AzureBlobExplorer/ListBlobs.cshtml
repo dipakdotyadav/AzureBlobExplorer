@@ -1,0 +1,42 @@
+
+@model List<(string ContainerName, string BlobName)>
+@{
+    ViewData["Title"] = "Blobs List";
+}
+
+<h2>All Blobs</h2>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Container</th>
+            <th>Blob</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var blob in Model)
+        {
+            <tr>
+                <td>@blob.ContainerName</td>
+                <td>@blob.BlobName</td>
+                <td>
+                    <a asp-action="DownloadBlob" asp-route-container="@blob.ContainerName" asp-route-blob="@blob.BlobName">Download</a> |
+                    <a asp-action="DeleteBlob" asp-route-container="@blob.ContainerName" asp-route-blob="@blob.BlobName">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<h3>Upload New Blob</h3>
+<form method="post" enctype="multipart/form-data" asp-action="UploadBlob">
+    <div class="mb-3">
+        <label>Select container:</label>
+        <input type="text" name="container" class="form-control" required />
+    </div>
+    <div class="mb-3">
+        <input type="file" name="file" class="form-control" />
+    </div>
+    <button type="submit" class="btn btn-success">Upload</button>
+</form>

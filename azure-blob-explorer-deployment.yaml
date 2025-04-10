@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: azure-blob-explorer
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: azure-blob-explorer
+  template:
+    metadata:
+      labels:
+        app: azure-blob-explorer
+    spec:
+      containers:
+      - name: azure-blob-explorer
+        image: <your-acr-name>.azurecr.io/azure-blob-explorer:v1
+        ports:
+        - containerPort: 80
+        env:
+        - name: AzureConnectionString
+          value: "<your-azure-blob-storage-connection-string>"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: azure-blob-explorer-service
+spec:
+  selector:
+    app: azure-blob-explorer
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+  type: LoadBalancer
